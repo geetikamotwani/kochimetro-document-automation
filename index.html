@@ -1,1 +1,761 @@
-C:\Users\Admin\OneDrive\Desktop\codes\8thsem_project\KMRL\index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Kochi Metro – Document Automation Prototype</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* --------------------------------------------------------
+    GLOBAL STYLING (Same as before)
+-------------------------------------------------------- */
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #3e90dd, #4bb5ff);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Center wrapper for login */
+#loginPage {
+    width: 380px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 40px;
+    border-radius: 15px;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+#loginPage img {
+    width: 90px;
+    margin-bottom: 15px;
+}
+
+#loginPage input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+}
+
+#loginPage button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border: none;
+    border-radius: 6px;
+    background: #add9ec;
+    color: #000;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#error {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ff9f9f;
+    display: none;
+}
+
+/* --------------------------------------------------------
+    MAIN APP (DASHBOARD + SIDEBAR)
+-------------------------------------------------------- */
+#app {
+    width: 100%;
+    height: 100vh;
+    display: none;
+}
+
+.sidebar {
+    width: 230px;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar img {
+    height: 60px;
+    margin-bottom: 15px;
+}
+
+.sidebar h2 {
+    font-size: 18px;
+    color: #bde3ff;
+    margin-bottom: 20px;
+}
+
+.menu a {
+    display: block;
+    width: 180px;
+    padding: 12px;
+    text-decoration: none;
+    color: #fff;
+    margin: 8px 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.menu a:hover, .active-tab {
+    background: #6fd3ff;
+    color: #1954d4 !important;
+}
+
+.main {
+    margin-left: 230px;
+    padding: 20px 40px;
+}
+
+header {
+    text-align: center;
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-bottom: 2px solid #6fd3ff;
+    font-size: 26px;
+    margin-bottom: 20px;
+}
+
+.user-info {
+    text-align: right;
+    margin-right: 40px;
+    font-size: 14px;
+}
+
+.logout-btn {
+    color: #ffb3b3;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Page containers */
+.page {
+    display: none;
+}
+
+.show {
+    display: block;
+}
+
+/* --------------------- Dashboard Styles ---------------------- */
+.container {
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 40px auto;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.loading-box {
+    padding: 20px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
+}
+
+.light {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: red;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { background: red; }
+    50% { background: green; }
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    background: rgba(255,255,255,0.15);
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
+.stat-item h2 {
+    font-size: 28px;
+}
+
+.summary-box {
+    margin-top: 30px;
+    background: rgba(255,255,255,0.15);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* --------------------- Train Styles ---------------------- */
+.train-track {
+    width: 100%;
+    height: 200px; /* taller so train is visible */
+    overflow: hidden;
+    margin-top: 40px;
+    border-top: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.train-fullwidth {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left;
+    border-radius: 8px;
+}
+
+/* --------------------------------------------------------
+    OTHER PAGES
+-------------------------------------------------------- */
+.page-box {
+    margin: 40px auto;
+    max-width: 900px;
+    padding: 40px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 15px;
+}
+
+.simple-card {
+    padding: 15px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+/* Settings Dropdown Style */
+#languageSelect {
+    padding: 8px;
+    margin-left: 10px;
+    border-radius: 5px;
+    border: 1px solid #6fd3ff;
+    background: #00000033; /* Dark background */
+    color: #fff;
+    font-size: 16px;
+}
+
+/* New: Document Detail Style */
+.document-detail {
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+    border: 1px solid #6fd3ff;
+}
+.document-detail h3 {
+    border-bottom: 1px dashed #6fd3ff;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+.document-detail p {
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="loginPage">
+    <img src="https://education.sakshi.com/sites/default/files/2022-10/kmrl.jpg">
+    <h2>Kochi Metro – Official Login</h2>
+
+    <input id="empId" placeholder="Employee ID">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="handleLogin()">Login</button>
+
+    <div id="error">Invalid Employee ID or Password</div>
+</div>
+
+<div id="app">
+
+    <div class="sidebar">
+        <img src="https://education.sakshi.com/sites/default/files/2022-10/kmrl.jpg">
+        <h2>KMRL Portal</h2>
+
+        <div class="menu">
+            <a class="active-tab" onclick="openPage('dashboard')">🏠 Dashboard</a>
+            <a onclick="openPage('departments')">🚉 Departments</a>
+            <a onclick="openPage('reports')">📑 Reports</a>
+            <a onclick="openPage('settings')">⚙ Settings</a>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <header>Kochi Metro Rail Limited – Document Automation System</header>
+
+        <div class="user-info">
+            Logged in as <b>KMRL1001</b> | 
+            <span class="logout-btn" onclick="logout()">Logout</span>
+        </div>
+
+        <div id="dashboard" class="page show">
+
+            <div class="container">
+                <h2>📡 Real-Time Document Monitoring</h2>
+
+                <div class="loading-box">
+                    Fetching documents from Gmail, WhatsApp, Teams… 
+                    <span class="light"></span>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <h2 id="docCount">0</h2>
+                        <p>Documents Processed</p>
+                    </div>
+                    <div class="stat-item">
+                        <h2 id="pendingReviewCount">0</h2> 
+                        <p>Pending Reviews</p>
+                    </div>
+                    <div class="stat-item">
+                        <h2 id="urgentAlertsToday">0</h2> 
+                        <p>Urgent Alerts Today</p>
+                    </div>
+                    <div class="stat-item">
+                        <h2>5</h2>
+                        <p>Departments Active</p>
+                    </div>
+                </div>
+                <div id="summary" class="summary-box" style="display:none;">
+                    <h3>📘 Summary</h3>
+                    Prototype summary generated.  
+                    In real system: AI will analyze & summarize documents.
+                </div>
+
+                <button onclick="document.getElementById('summary').style.display='block'">
+                    Generate Summary
+                </button>
+
+                <div class="train-track">
+                    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXByd3F2OGVyMjl4bWpwMHljeXdqNGttMW5zbmJvaWkwaTQzcTU5bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q/ZFupgrsK1zJulq2F1X/giphy.gif" 
+                              alt="Moving Metro Train" 
+                              class="train-fullwidth">
+                </div>
+            </div>
+        </div>
+
+        <div id="departments" class="page">
+            <div class="page-box">
+                <h2>🚉 Departments Overview</h2>
+                
+                <div id="departmentsContainer">
+                    </div>
+
+                <hr style="margin: 30px 0; border: 1px solid rgba(255,255,255,0.2);">
+
+                <div id="documentViewWrapper" style="display: flex;">
+                    <div id="departmentDetailView" style="flex: 1;">
+                        <p style="text-align: center;">Select a department above to view the documents.</p>
+                    </div>
+                    
+                    <div id="detailedDocumentView" style="flex: 1; padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.2);">
+                        <p style="text-align: center;">Click on a document to see its full analysis.</p>
+                    </div>
+                </div>
+                
+
+            </div>
+        </div>
+
+        <div id="reports" class="page">
+            <div class="page-box">
+                <div id="reportsContainer">
+                    <h2>📑 Automated Reports</h2>
+                    <p>Loading reports...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings" class="page">
+            <div class="page-box">
+                <div id="settingsContainer">
+                    <h2>⚙ Settings</h2>
+                    <p>Loading settings...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+/* --------------------------------------------------------
+   A. DATA PACKETS (MODIFIED with subject and aiAnalysis)
+-------------------------------------------------------- */
+const documentData = [
+  // Engineering - 8 Docs
+  { id: "ENG001", source: "Teams", type: "Alert", department: "Engineering", urgency: "High", review: true, alertDate: "2025-12-16", subject: "Urgent: Track Fault reported at Aluva station.", aiAnalysis: "Critical track vibration detected near KMRL Pylon 34. Immediate deployment of maintenance crew required. Estimated repair time: 4 hours. Escalated to Chief Engineer." },
+  { id: "ENG002", source: "Gmail", type: "Report", department: "Engineering", urgency: "Normal", review: false, alertDate: "2025-12-14", subject: "Monthly Rail Welding Quality Report for November", aiAnalysis: "Quality check passed for 98% of welds. 2% deviation marked for re-inspection by January. No immediate action required." },
+  { id: "ENG003", source: "WhatsApp", type: "Invoice", department: "Engineering", urgency: "Normal", review: false, alertDate: "2025-12-14", subject: "Invoice for procurement of signaling cables", aiAnalysis: "Invoice FINV23456 received. Amount matches Purchase Order PO-987. Forwarded to Finance for 7-day payment cycle." },
+  { id: "ENG004", source: "Teams", type: "Alert", department: "Engineering", urgency: "High", review: true, alertDate: "2025-12-16", subject: "Power fluctuation detected Vytilla substation", aiAnalysis: "Voltage drop detected (4.5%). Likely cause: heavy load during peak hours. Operations team informed. Needs monitoring for the next 24 hours." },
+  { id: "ENG005", source: "Gmail", type: "Work Order", department: "Engineering", urgency: "Normal", review: false, alertDate: "2025-12-15", subject: "Work Order: Escalator repair at MG Road station", aiAnalysis: "Work order approved. Contractor details verified. Expected completion: 2025-12-20." },
+  { id: "ENG006", source: "Gmail", type: "Report", department: "Engineering", urgency: "Low", review: false, alertDate: "2025-12-15", subject: "Bi-annual inspection of station roofing", aiAnalysis: "Minor wear and tear noted. Repair scheduling required for Q1 2026. Non-critical." },
+  { id: "ENG007", source: "Teams", type: "Tender", department: "Engineering", urgency: "Normal", review: false, alertDate: "2025-12-15", subject: "Tender document for new track lubrication system", aiAnalysis: "Document identified as Tender. Deadline for submission: 2026-01-30. Saved in procurement folder." },
+  { id: "ENG008", source: "WhatsApp", type: "Maintenance", department: "Engineering", urgency: "Normal", review: false, alertDate: "2025-12-14", subject: "Checklist for daily train inspection #101", aiAnalysis: "Daily inspection checklist received. All points marked green. Approved." },
+
+  // Finance - 3 Docs
+  { id: "FIN001", source: "Gmail", type: "Invoice", department: "Finance", urgency: "Normal", review: false, alertDate: "2025-12-15", subject: "Pending payment for software license renewal", aiAnalysis: "Software license payment due (Vendor: TechSolutions). Amount verified. Payment scheduled for 2025-12-22." },
+  { id: "FIN002", source: "Gmail", type: "Budget", department: "Finance", urgency: "Normal", review: false, alertDate: "2025-12-15", subject: "Q4 Budget Allocation Draft - Review", aiAnalysis: "Budget draft received. Flagged HR expenditure as potentially over budget. Review required by CFO." },
+  { id: "FIN003", source: "Teams", type: "Payment", department: "Finance", urgency: "High", review: true, alertDate: "2025-12-16", subject: "URGENT: Foreign Currency Exchange Rate Alert", aiAnalysis: "Forex rate crossed the acceptable threshold. Transaction FEX-009 must be processed immediately to minimize loss. High urgency review by Treasury head." },
+
+  // HR - 5 Docs
+  { id: "HRM001", source: "Gmail", type: "Notice", department: "HR", urgency: "Normal", review: false, alertDate: "2025-12-14", subject: "Holiday calendar circulation for 2026", aiAnalysis: "Official notice. Circulated to all employees. Saved in HR records." },
+  { id: "HRM002", source: "WhatsApp", type: "Application", department: "HR", urgency: "Normal", review: false, alertDate: "2025-12-14", subject: "Leave application for Employee KMRL2045", aiAnalysis: "Leave application received. Approved based on department capacity. 3 days leave." },
+  { id: "HRM003", source: "Gmail", type: "Hiring", department: "HR", urgency: "Normal", review: false, alertDate: "2025-12-15", subject: "Interview Schedule for Station Controller post", aiAnalysis: "Schedule finalized. Interviews set for 2025-12-20. Candidates notified." },
+  { id: "HRM004", source: "Teams", type: "Notice", department: "HR", urgency: "Normal", review: false, alertDate: "2025-12-15", subject: "Training Module update notification", aiAnalysis: "Training document received. Marked for internal circulation to training heads." },
+  { id: "HRM005", source: "Gmail", type: "Application", department: "HR", urgency: "Normal", review: false, alertDate: "2025-12-15", subject: "Relocation request from KMRL3001", aiAnalysis: "Relocation request received. Forwarded to management for feasibility study." },
+
+  // Security - 1 Doc
+  { id: "SEC001", source: "Teams", type: "Emergency", department: "Security", urgency: "Critical", review: true, alertDate: "2025-12-14", subject: "Unattended bag reported at Edappally station (2025-12-14)", aiAnalysis: "Incident report filed. Security team responded and cleared the area. Status: Resolved. Escalation required for post-incident review." },
+
+  // Operations - 4 Docs
+  { id: "OPR001", source: "Gmail", type: "Schedule", department: "Operations", urgency: "Normal", review: false, alertDate: "2025-12-14", subject: "Draft: Christmas Day extended operating hours", aiAnalysis: "Schedule draft received. Forwarded to management for final approval. Non-critical." },
+  { id: "OPR002", source: "Teams", type: "Incident", department: "Operations", urgency: "High", review: true, alertDate: "2025-12-15", subject: "Minor delay on Blue Line due to technical glitch", aiAnalysis: "Minor delay recorded (10 minutes). Technical glitch resolved. Passengers informed via announcements. Review: Check communication protocol used." },
+  { id: "OPR003", source: "WhatsApp", type: "Feedback", department: "Operations", urgency: "Low", review: false, alertDate: "2025-12-15", subject: "Customer feedback on AC temperature (Trip 104)", aiAnalysis: "Customer feedback received. Forwarded to Maintenance team for climate control check on Train 104." },
+  { id: "OPR004", source: "Gmail", type: "Report", department: "Operations", urgency: "Normal", review: false, alertDate: "2025-12-15", subject: "Quarterly Passenger Volume Report Q4 Draft", aiAnalysis: "Draft report received. Volumes are within projections. Requires sign-off by COO." },
+];
+
+const reportsData = [
+    { title: "Daily Document Summary - 15 Dec", type: "Summary", date: "2025-12-15", status: "Generated" },
+    { title: "Department-wise Breakdown Q4", type: "Analysis", date: "2025-10-01", status: "Pending Review" },
+    { title: "Finance Invoice Volume - Nov 2025", type: "Financial", date: "2025-12-01", status: "Generated" },
+    { title: "Security Alert History - Weekly", type: "Security", date: "2025-12-15", status: "Generated" },
+];
+
+const settingsData = {
+    currentLanguage: "English", 
+    availableLanguages: ["English", "Malayalam", "Hindi", "Kannada"], 
+    dataSources: [
+        { name: "Gmail", status: "Connected", lastSync: "2025-12-15 10:30" },
+        { name: "WhatsApp Messages", status: "Disconnected", lastSync: "N/A" }, 
+        { name: "Teams Messages", status: "Connected", lastSync: "2025-12-15 11:00" },
+    ],
+    notifications: {
+        status: "Active",
+        frequency: "Immediate Alerts for High Urgency",
+        alerts: ["Critical", "High Urgency Documents"]
+    }
+};
+
+/* --------------------------------------------------------
+   B. DASHBOARD JADOO
+-------------------------------------------------------- */
+function updateDashboardStats() {
+    const totalDocs = documentData.length;
+    document.getElementById("docCount").innerText = totalDocs;
+
+    const pendingReviews = documentData.filter(doc => doc.review === true).length;
+    document.getElementById("pendingReviewCount").innerText = pendingReviews;
+    
+    const today = "2025-12-16"; 
+    const urgentAlertsToday = documentData.filter(doc => 
+        (doc.urgency === "High" || doc.urgency === "Critical") && doc.alertDate === today
+    ).length;
+    document.getElementById("urgentAlertsToday").innerText = urgentAlertsToday;
+
+    let count = 0;
+    const initialDocCount = documentData.length;
+    const docCountElement = document.getElementById("docCount");
+
+    if (window.docCounterInterval) clearInterval(window.docCounterInterval);
+
+    window.docCounterInterval = setInterval(() => {
+        if (count < initialDocCount) {
+            count++;
+            docCountElement.innerText = count;
+        } else {
+            clearInterval(window.docCounterInterval);
+        }
+    }, 100); 
+}
+
+
+/* --------------------------------------------------------
+   C. DEPARTMENTS JADOO
+-------------------------------------------------------- */
+function loadDepartments() {
+    const container = document.getElementById("departmentsContainer");
+    let departmentStats = {};
+    
+    // Resetting views
+    document.getElementById("departmentDetailView").innerHTML = 
+        '<p style="text-align: center;">Select a department above to view the documents.</p>';
+    document.getElementById("detailedDocumentView").innerHTML = 
+        '<p style="text-align: center;">Click on a document to see its full analysis.</p>';
+
+
+    documentData.forEach(doc => {
+        if (!departmentStats[doc.department]) {
+            departmentStats[doc.department] = { total: 0, types: [] };
+        }
+        departmentStats[doc.department].total++;
+        departmentStats[doc.department].types.push(doc.type);
+    });
+
+    let htmlContent = '';
+    for (const dept in departmentStats) {
+        const types = [...new Set(departmentStats[dept].types)].join(', '); 
+        
+        htmlContent += `
+            <div class="simple-card" onclick="viewDepartmentDocs('${dept}')" style="cursor: pointer; transition: background 0.3s;">
+                <b>${dept}</b> – ${departmentStats[dept].total} new documents (Types: ${types})
+            </div>
+        `;
+    }
+
+    container.innerHTML = htmlContent;
+}
+
+
+/* --------------------------------------------------------
+   D. LIST JADOO (MODIFIED - Document List View)
+-------------------------------------------------------- */
+function viewDepartmentDocs(departmentName) {
+    const detailView = document.getElementById("departmentDetailView");
+    const deptDocs = documentData.filter(doc => doc.department === departmentName);
+    
+    // Reset detailed view
+    document.getElementById("detailedDocumentView").innerHTML = 
+        '<p style="text-align: center;">Click on a document to see its full analysis.</p>';
+
+
+    let htmlContent = `
+        <h3>📄 Documents for ${departmentName} (${deptDocs.length})</h3>
+    `;
+
+    if (deptDocs.length > 0) {
+        htmlContent += '<div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px;">';
+        
+        deptDocs.forEach(doc => {
+            let statusIcon = doc.review ? '⚠️' : '✅';
+            let statusColor = doc.review ? '#ff9f9f' : '#b3ffb3'; 
+            
+            // Document card is now clickable to open the detail view
+            htmlContent += `
+                <div class="simple-card" onclick="viewDocumentDetail('${doc.id}')" style="cursor: pointer; border-left: 5px solid ${statusColor}; margin-bottom: 5px; font-size: 14px;">
+                    <p style="margin: 0;">
+                        <b>[${doc.id}] ${doc.subject}</b> 
+                        <span style="float: right; color: ${statusColor};">${statusIcon}</span>
+                        <br>
+                        <small>Type: ${doc.type} | Urgency: ${doc.urgency}</small>
+                    </p>
+                </div>
+            `;
+        });
+        htmlContent += '</div>';
+    } else {
+        htmlContent += '<p>No documents found for this department.</p>';
+    }
+
+    detailView.innerHTML = htmlContent;
+}
+
+/* --------------------------------------------------------
+   E. DETAILED DOCUMENT VIEW (NEW FUNCTION)
+-------------------------------------------------------- */
+function viewDocumentDetail(docId) {
+    const detailContainer = document.getElementById("detailedDocumentView");
+    const doc = documentData.find(d => d.id === docId);
+
+    if (!doc) {
+        detailContainer.innerHTML = `<div class="document-detail">Document ID ${docId} not found.</div>`;
+        return;
+    }
+
+    const reviewStatus = doc.review ? 
+        `<span style="color: #ff9f9f;">⚠️ Requires Review</span>` : 
+        `<span style="color: lightgreen;">✅ Fully Processed</span>`;
+
+    const htmlContent = `
+        <div class="document-detail">
+            <h3>📂 Document Details: ${doc.id}</h3>
+            
+            <p><b>Subject:</b> ${doc.subject}</p>
+            <p><b>Department:</b> ${doc.department}</p>
+            <p><b>Source/Channel:</b> ${doc.source}</p>
+            <p><b>Urgency:</b> ${doc.urgency}</p>
+            <p><b>Date Received:</b> ${doc.alertDate}</p>
+            <p><b>Status:</b> ${reviewStatus}</p>
+            
+            <hr style="border: 0; border-top: 1px dashed rgba(255,255,255,0.2);">
+            
+            <h4>🧠 AI Analysis/Summary</h4>
+            <p style="font-style: italic;">"${doc.aiAnalysis}"</p>
+            
+            <button onclick="alert('Simulating Document Approval for ${doc.id}')" style="background: #6fd3ff; border: none; padding: 10px; border-radius: 5px; cursor: pointer; color: black; margin-top: 10px;">
+                Approve Document / Take Action
+            </button>
+        </div>
+    `;
+
+    detailContainer.innerHTML = htmlContent;
+}
+
+
+/* --------------------------------------------------------
+   F. REPORTS JADOO
+-------------------------------------------------------- */
+function loadReports() {
+    const container = document.getElementById("reportsContainer");
+    let htmlContent = '<h2>📑 Automated Reports</h2>';
+
+    if (reportsData.length > 0) {
+        reportsData.forEach(report => {
+            const statusColor = report.status === "Pending Review" ? '#ff9f9f' : '#b3ffb3';
+            htmlContent += `
+                <div class="simple-card" style="border-left: 5px solid ${statusColor}; margin-bottom: 10px;">
+                    <p style="margin: 0;">
+                        <b>${report.title}</b>
+                        <span style="float: right; font-weight: bold; color: ${statusColor};">${report.status}</span>
+                        <br>
+                        <small>Type: ${report.type} | Date: ${report.date}</small>
+                    </p>
+                </div>
+            `;
+        });
+    }
+    
+    htmlContent += '<div class="simple-card">PDF Export (coming soon)</div>';
+
+    container.innerHTML = htmlContent;
+}
+
+
+/* --------------------------------------------------------
+   G. SETTINGS JADOO (Language Functionality)
+-------------------------------------------------------- */
+function changeLanguage(selectElement) {
+    const newLang = selectElement.value;
+    settingsData.currentLanguage = newLang;
+    loadSettings();
+    alert(`Language changed to ${newLang}! (Prototype function)`);
+}
+
+function loadSettings() {
+    const container = document.getElementById("settingsContainer");
+    let htmlContent = '<h2>⚙ Settings</h2>';
+    
+    // Dropdown Options banana
+    let languageOptions = '';
+    settingsData.availableLanguages.forEach(lang => {
+        const selectedAttr = (lang === settingsData.currentLanguage) ? 'selected' : '';
+        languageOptions += `<option value="${lang}" ${selectedAttr}>${lang}</option>`;
+    });
+
+    // 1. Language Setting
+    htmlContent += `
+        <div class="simple-card" style="background: rgba(255, 255, 255, 0.15);">
+            <b>🌍 Language Settings</b>
+            <p style="margin: 5px 0 0 0;">
+                Select Language: 
+                <select id="languageSelect" onchange="changeLanguage(this)">
+                    ${languageOptions}
+                </select>
+                <br>
+                <small>Current Language: <b>${settingsData.currentLanguage}</b></small>
+            </p>
+        </div>
+    `;
+
+    // 2. Data Source Connections
+    htmlContent += `
+        <div class="simple-card" style="margin-top: 15px; background: rgba(255, 255, 255, 0.15);">
+            <b>🔌 Data Source Connections (Gmail, WhatsApp, Teams)</b>
+            ${settingsData.dataSources.map(source => {
+                const statusColor = source.status === "Connected" ? 'lightgreen' : '#ff9f9f';
+                return `
+                    <p style="margin: 5px 0 0 0;">
+                        ${source.name}: 
+                        <span style="font-weight: bold; color: ${statusColor};">${source.status}</span> 
+                        (Last Sync: ${source.lastSync})
+                    </p>
+                `;
+            }).join('')}
+        </div>
+    `;
+
+    // 3. Notification & Alert Settings
+    htmlContent += `
+        <div class="simple-card" style="margin-top: 15px; background: rgba(255, 255, 255, 0.15);">
+            <b>🔔 Notification & Alert Settings</b>
+            <p style="margin: 5px 0 0 0;">Status: <b>${settingsData.notifications.status}</b></p>
+            <p style="margin: 5px 0 0 0;">Frequency: <b>${settingsData.notifications.frequency}</b></p>
+            <p style="margin: 5px 0 0 0;">Alert Types: ${settingsData.notifications.alerts.join(', ')}</p>
+        </div>
+    `;
+
+    container.innerHTML = htmlContent;
+}
+
+
+/* --------------------------------------------------------
+   H. LOGIN FUNCTION (Existing)
+-------------------------------------------------------- */
+function handleLogin() {
+    const id = document.getElementById("empId").value;
+    const pw = document.getElementById("password").value;
+    const error = document.getElementById("error");
+
+    if (id === "KMRL1001" && pw === "admin123") {
+        document.getElementById("loginPage").style.display = "none";
+        document.getElementById("app").style.display = "block";
+        updateDashboardStats(); 
+    } else {
+        error.style.display = "block";
+    }
+}
+
+
+/* --------------------------------------------------------
+   I. NAVIGATION (Updated)
+-------------------------------------------------------- */
+function openPage(page) {
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("show"));
+    document.getElementById(page).classList.add("show");
+
+    document.querySelectorAll(".menu a").forEach(a => a.classList.remove("active-tab"));
+    event.target.classList.add("active-tab");
+    
+    if (page === 'departments') {
+        loadDepartments(); 
+    } else if (page === 'reports') {
+        loadReports();
+    } else if (page === 'settings') {
+        loadSettings(); 
+    }
+}
+
+
+/* --------------------------------------------------------
+   J. LOGOUT (Existing)
+-------------------------------------------------------- */
+function logout() {
+    location.reload();
+}
+
+// Page load hote hi Dashboard Jadoo chalao
+window.onload = updateDashboardStats;
+</script>
+</body>
+</html>
